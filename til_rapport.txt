@@ -1,0 +1,18 @@
+sudo apt-get install libgmp-dev
+https://gmplib.org/
+
+
+
+
+Picking g
+
+	Y = g^x mod p
+
+
+	For every value of x, we should get a unique value of Y
+
+	All generators are factors of p-1
+
+
+
+
