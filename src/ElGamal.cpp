@@ -239,6 +239,8 @@ PublicKey ElGamal::generatePublicKey(bigInt privKey)
 
 bigInt ElGamal::generateRandomNumber(int bits)
 {
+	gmp_randclass rr(gmp_randinit_default);
+
 	sleep(1);
 	rr.seed(time(NULL));
 

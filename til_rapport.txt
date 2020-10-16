@@ -2,6 +2,11 @@ sudo apt-get install libgmp-dev
 https://gmplib.org/
 
 
+
+https://en.wikipedia.org/wiki/ElGamal_encryption
+
+
+
 Abstract
 
 	This is my submission for the home exam in Discrete Mathmatics, fall 2020. The assignment consists of implementing the ElGamal encryption algorithm, in a programming language of my own choosing. 

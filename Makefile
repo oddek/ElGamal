@@ -3,7 +3,7 @@ CC = g++
 CPPFLAGS = -I /usr/include -L /usr/lib
 LDFLAGS = -lgmp -lgmpxx
 
-OBJS = main.o ElGamal.o
+OBJS = src/main.o src/ElGamal.o
 all: build run
 run:
 	./$(PROG)

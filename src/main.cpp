@@ -17,8 +17,7 @@
 int main()
 {
 	srand(time(0));
-	gmp_randclass rr(gmp_randinit_default);
-
+	
 	try
 	{
 		std::string message = "jfkd";//kdljfkdahfkdajfdlkajfkdlajkld";
