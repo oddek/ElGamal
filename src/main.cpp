@@ -42,7 +42,6 @@ int main()
 		{
 			std::cout << "Decrypted message is NOT equal to input \n";
 		}
-
 	}
 	catch (std::exception& e)
   	{

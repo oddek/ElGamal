@@ -76,19 +76,29 @@ texcl=true,
 \newpage
 
 \section{Abstract}
-This is my submission for the home exam in Discrete Mathmatics, fall 2020. The assignment consists of implementing the ElGamal encryption algorithm, in a programming language of my own choosing. 
+This is my submission for the home exam in Discrete Mathmatics, fall 2020. 
 
 
-Quite a bit of overhead were required to encrypt larger inputs. Because this course is concerned with the mathematics behind ElGamal and to satisfy the professors requirement for a short paper, I will not cover this part of the implementation to a detailed extent. 
 
 %Innholdsfortegnelse
 \section{Introduction}
+The assignment consists of implementing the ElGamal encryption algorithm, in a programming language of my own choosing. As a requirement for the implementation is speed, I found the most suitable language for the task to be C++. Luckily this is also the language I'm most proficient in. 
 
+One downsize of using C++ is the fact that there exists no built in support for large numbers. Building my own library for this would be to time-consuming, so I decided to make use of the Gnu Multiple Precision library (GMP)\cite{GMP}.
 
-\subsection{Asymmetric Encryption}
+Quite a bit of overhead were required to encrypt larger inputs. However, because this course is concerned with the mathematics behind ElGamal and the fact that the professor wanted a short paper, I will not cover this part of the implementation to a detailed extent. 
+
 
 \subsection{ElGamal}
+ElGamal is an asymmetric encryption scheme based on Diffie-Hellman. That it is asymmetric means that the algorithm uses two different keys for encryption and decryption. As encouraged by the professor, I have used the Wikipedia article\cite{WIKI} as my main source of information on ElGamal. Instead of reiterating the details of the algorithm from the article, I will just focus on the main points here. 
 
+We choose a cyclic group G, with a generator g. The private key is denoted by \textit{x}. We use the private key to generate a part of the public key, \textit{h}:
+
+\begin{equation}
+h := g^{x}
+\end{equation}
+
+If we choose a bad g, the discrete logarithm problem which gives ElGamal its security, will decrease in complexity. 
 
 \section{Implementation}
 
