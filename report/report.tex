@@ -76,21 +76,21 @@ texcl=true,
 \newpage
 
 \section{Abstract}
-This is my submission for the home exam in Discrete Mathmatics, fall 2020. 
+This is my submission for the home exam in Discrete Mathmatics, fall 2020.
 
 
 
 %Innholdsfortegnelse
 \section{Introduction}
-The assignment consists of implementing the ElGamal encryption algorithm, in a programming language of my own choosing. As a requirement for the implementation is speed, I found the most suitable language for the task to be C++. Luckily this is also the language I'm most proficient in. 
+The assignment consists of implementing the ElGamal encryption algorithm, in a programming language of my own choosing. As a requirement for the implementation is speed, I found the most suitable language for the task to be C++. Luckily this is also the language I'm most proficient in.
 
 One downsize of using C++ is the fact that there exists no built in support for large numbers. Building my own library for this would be to time-consuming, so I decided to make use of the Gnu Multiple Precision library (GMP)\cite{GMP}.
 
-Quite a bit of overhead were required to encrypt larger inputs. However, because this course is concerned with the mathematics behind ElGamal and the fact that the professor wanted a short paper, I will not cover this part of the implementation to a detailed extent. 
+Quite a bit of overhead were required to encrypt larger inputs. However, because this course is concerned with the mathematics behind ElGamal and the fact that the professor wanted a short paper, I will not cover this part of the implementation to a detailed extent.
 
 
 \subsection{ElGamal}
-ElGamal is an asymmetric encryption scheme based on Diffie-Hellman. That it is asymmetric means that the algorithm uses two different keys for encryption and decryption. As encouraged by the professor, I have used the Wikipedia article\cite{WIKI} as my main source of information on ElGamal. Instead of reiterating the details of the algorithm from the article, I will just focus on the main points here. 
+ElGamal is an asymmetric encryption scheme based on Diffie-Hellman. That it is asymmetric means that the algorithm uses two different keys for encryption and decryption. As encouraged by the professor, I have used the Wikipedia article\cite{WIKI} as my main source of information on ElGamal. Instead of reiterating the details of the algorithm from the article, I will just focus on the main points here.
 
 We choose a cyclic group G, with a generator g. The private key is denoted by \textit{x}. We use the private key to generate a part of the public key, \textit{h}:
 
@@ -98,7 +98,7 @@ We choose a cyclic group G, with a generator g. The private key is denoted by \t
 h := g^{x}
 \end{equation}
 
-If we choose a bad g, the discrete logarithm problem which gives ElGamal its security, will decrease in complexity. 
+If we choose a bad g, the discrete logarithm problem which gives ElGamal its security, will decrease in complexity.
 
 \section{Implementation}
 
@@ -106,9 +106,9 @@ If we choose a bad g, the discrete logarithm problem which gives ElGamal its sec
 \subsection{Overhead}
 
 \subsubsection{Padding}
-Asymmetric encryption algorithms like RSA and ElGamal, requires a padding scheme in order to make the length of all strings uniform and henceforth increase the security. A common padding scheme for RSA is PKCS\#1.5. As it was hard to find sources for padding schemes commonly used with ElGamal, my choice also fell on PKCS for this implementation. 
+Asymmetric encryption algorithms like RSA and ElGamal, requires a padding scheme in order to make the length of all strings uniform and henceforth increase the security. A common padding scheme for RSA is PKCS\#1.5. As it was hard to find sources for padding schemes commonly used with ElGamal, my choice also fell on PKCS for this implementation.
 
-A visualization of the scheme can be seen in figure \ref{rPKCS}.  
+A visualization of the scheme can be seen in figure \ref{rPKCS}.
 
 
 \begin{figure}[H]
@@ -120,7 +120,7 @@ A visualization of the scheme can be seen in figure \ref{rPKCS}.
 
 \subsubsection{Block Handling}
 
-ElGamal is not a common choice for encrypting larger texts, however after conversations with the lecturer, I understood that this was a requirement for this assignment. To keep the overhead to a minimum, ECB(Electronic Codebook) was chosen. An illustration of ECB can be seen in figure \ref{rECB}. If the plaintext is larger than the number of bits of P, we divide it up into blocks, encrypt them seperately, and concatenate them. 
+ElGamal is not a common choice for encrypting larger texts, however after conversations with the lecturer, I understood that this was a requirement for this assignment. To keep the overhead to a minimum, ECB(Electronic Codebook) was chosen. An illustration of ECB can be seen in figure \ref{rECB}. If the plaintext is larger than the number of bits of P, we divide it up into blocks, encrypt them seperately, and concatenate them.
 %DETTE BILDET MÅ BYTTES UT, VISER DEC OG IKKE ENC!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 \begin{figure}[H]
  \centering
@@ -170,9 +170,9 @@ publicKey  = (G, q, g, h)
 Y = g^{x} \bmod p
 \end{equation}
 
-	For every value of x, we should get a unique value of Y
+For every value of x, we should get a unique value of Y
 
-	All generators are factors of p-1
+All generators are factors of p-1
 
 
 

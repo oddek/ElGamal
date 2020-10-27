@@ -2,26 +2,29 @@
 
 using namespace ElGamal;
 
-
+//Constructor for public key struct, generates based on the private key
 ElGamal::PublicKey::PublicKey(std::string _p, std::string _g, bigInt privKey)
 {
-	p = mpz_class(_p, 16);
+	p = bigInt(_p, 16);
 	q = p - 1;
 	g = bigInt(_g, 16);
 	h = modExp(g, privKey, p);
 }
 
-//Main encryption function. Takes hex-string
+//Main encryption function. Takes and returns a hex-string
 std::string ElGamal::encrypt(std::string plaintext, PublicKey pubKey)
 {
+	//Parse and pad the message, get encryptable blocks instead.
 	auto blocks = getMessageBlocks(plaintext, bitCount(pubKey.p));
 	std::vector<CipherBlock> cipherBlocks;
 
+	//Encrypt each block separately
 	for(auto block : blocks)
 	{
 		cipherBlocks.push_back(encryptBlock(block, pubKey));
 
 	}
+	//Pad (if necessary) and concatenate all cipher blocks to a single string
 	auto ciphertext = concatCipherBlocks(cipherBlocks, bitCount(pubKey.p));
 	std::cout << "Successfully encrypted " << blocks.size() << " blocks\n";
 	return ciphertext;
@@ -32,23 +35,25 @@ std::vector<bigInt> ElGamal::getMessageBlocks(std::string plaintext, unsigned in
 {
 	std::vector<bigInt> blocks;
 
+	//Initial blockSize, needs to be within what is allowed by PKCS padding scheme
 	unsigned int blockSize = pBitSize/8 - 11*3;
 
 	for(int i = 0; i < plaintext.size(); i += blockSize)
 	{
-
+		//Extract substrings of suitable size
 		std::string s = plaintext.substr(i, blockSize);
-
+		//Insert a padded block into the array
 		blocks.push_back(PKCS(s, pBitSize));
 	}
 	return blocks;
 }
 
 //PKCS#1V1.5 padding scheme
+//More detailed description at: LEGG INN LINK HER!!!!!!!!!!!!!!!!
 bigInt ElGamal::PKCS(std::string message, int nBitLen)
 {
 	std::string binaryMessage = "";
-	int keyLen = (nBitLen);
+	int keyLen = nBitLen;
 	if(message.size()*8 > keyLen - 11*3) throw std::invalid_argument("Message size to big in PKCS");
 
 	int pLength = keyLen - message.size()*8 - 3*8;
@@ -69,7 +74,7 @@ bigInt ElGamal::PKCS(std::string message, int nBitLen)
 		binaryMessage += std::bitset<8>(c).to_string();
 	}
 
-	mpz_class padded(binaryMessage, 2);
+	bigInt padded(binaryMessage, 2);
 	return padded;
 }
 
@@ -81,13 +86,13 @@ CipherBlock ElGamal::encryptBlock(bigInt m, PublicKey pubKey)
 	{
 		throw std::invalid_argument( "m larger than p" );
 	}
-	mpz_class y = generateRandomNumber(1, pubKey.q - 1);
+	bigInt y = generateRandomNumber(1, pubKey.q - 1);
 
-	mpz_class s = modExp(pubKey.h, y, pubKey.p);
+	bigInt s = modExp(pubKey.h, y, pubKey.p);
 
-	mpz_class c1 = modExp(pubKey.g, y, pubKey.p);
+	bigInt c1 = modExp(pubKey.g, y, pubKey.p);
 
-	mpz_class c2 = modExp(m*s, 1, pubKey.p);
+	bigInt c2 = modExp(m*s, 1, pubKey.p);
 
 	//std::cout << "Encrypted block with Y =\n\t" << y << "\n";
 
@@ -101,7 +106,7 @@ std::string ElGamal::concatCipherBlocks(std::vector<CipherBlock> cipherBlocks, u
 	unsigned int cSize = pBitSize/4;
 	for(auto c : cipherBlocks)
 	{
-		std::string c1 = c.first.get_str(16);		
+		std::string c1 = c.first.get_str(16);
 		std::string c2 = c.second.get_str(16);
 		while(c1.size() < cSize) c1.insert(0, 1, '0');
 		while(c2.size() < cSize) c2.insert(0, 1, '0');
@@ -152,13 +157,13 @@ std::vector<CipherBlock> ElGamal::parseCiphertext(std::string ciphertext, unsign
 }
 
 //Decrypt a single block
-mpz_class ElGamal::decryptBlock(CipherBlock c, PublicKey pubKey, bigInt privKey)
+bigInt ElGamal::decryptBlock(CipherBlock c, PublicKey pubKey, bigInt privKey)
 {
 
-	mpz_class s = modExp(c.first, privKey, pubKey.p);
-	mpz_class sInv = modExp(c.first, pubKey.q - privKey, pubKey.p);
+	bigInt s = modExp(c.first, privKey, pubKey.p);
+	bigInt sInv = modExp(c.first, pubKey.q - privKey, pubKey.p);
 
-	mpz_class m = modExp(c.second * sInv, 1, pubKey.p);
+	bigInt m = modExp(c.second * sInv, 1, pubKey.p);
 
 	return m;
 }
@@ -227,7 +232,7 @@ PublicKey ElGamal::generatePublicKey(bigInt privKey)
 }
 
 //Needed to generate random Y
-bigInt ElGamal::generateRandomNumber(mpz_class min, mpz_class max)
+bigInt ElGamal::generateRandomNumber(bigInt min, bigInt max)
 {
 	return rand() % (max - min + 1) + min;
 }
@@ -259,9 +264,9 @@ std::string ElGamal::hexStringToPlaintext(std::string s)
 }
 
 //Helper
-uintmax_t ElGamal::bitCount(mpz_class n)
+int ElGamal::bitCount(bigInt n)
 {
-	uintmax_t count = 0;
+	int count = 0;
 	while(n)
 	{
 		count++;

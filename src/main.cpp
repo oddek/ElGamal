@@ -7,20 +7,23 @@ void writeFile(std::string fileName, std::string contents);
 
 int main()
 {
+	//Files to be written and read
 	std::string inputFile = "test.txt";
 	std::string encryptFile = "encrypted.txt";
 	std::string decryptFile = "decrypted.txt";
 
-
+	//Seed random number generator with time.
 	srand(time(0));
 	try
 	{
-		bigInt privKey = 4;
+		//Set privatekey (x)
+		bigInt privKey = 79832749832;
+		//Generate public key (G, g, q, x)
 		auto pubKey = ElGamal::generatePublicKey(privKey);
 		ElGamal::printParameters(pubKey, privKey);
 
 		std::cout << "Reading message from " << inputFile << "\n";
-		std::string message = readFile(inputFile);//kdljfkdahfkdajfdlkajfkdlajkld";
+		std::string message = readFile(inputFile);
 		std::cout << "Message to be encrypted is " << message.size() << " characters long\n\n";
 		std::cout << "Encrypting message..\n";
 		auto ciphertext = ElGamal::encrypt(ElGamal::plaintextToHexString(message), pubKey);
@@ -28,7 +31,7 @@ int main()
 		std::cout << "Wrote encrypted message to " << encryptFile << "\n";
 		std::cout << "Encrypted message is " << ciphertext.size() << " hex characters long\n\n";
 
-		std::cout << "Decrypting message..\n"; 
+		std::cout << "Decrypting message..\n";
 		auto plaintext = ElGamal::hexStringToPlaintext(ElGamal::decrypt(ciphertext, pubKey, privKey));
 		writeFile(decryptFile, plaintext);
 		std::cout << "Wrote decrypted message to " << decryptFile << "\n";
@@ -48,7 +51,6 @@ int main()
     	std::cout << e.what() << '\n';
   	}
   	return 0;
-
 }
 
 std::string readFile(std::string fileName)
