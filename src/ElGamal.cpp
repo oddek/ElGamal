@@ -49,17 +49,21 @@ std::vector<bigInt> ElGamal::getMessageBlocks(std::string plaintext, unsigned in
 }
 
 //PKCS#1V1.5 padding scheme
-//More detailed description at: LEGG INN LINK HER!!!!!!!!!!!!!!!!
+//More detailed description at: https://www.di-mgt.com.au/rsa_alg.html
 bigInt ElGamal::PKCS(std::string message, int nBitLen)
 {
 	std::string binaryMessage = "";
 	int keyLen = nBitLen;
+	//Check that the block we are about to parse isn't to long
 	if(message.size()*8 > keyLen - 11*3) throw std::invalid_argument("Message size to big in PKCS");
 
+	//Length of the random padding, will be keylength - message size - the size of the static flags.
 	int pLength = keyLen - message.size()*8 - 3*8;
+	//Appending the startflags to the message
 	binaryMessage += "00000000";
 	binaryMessage += "00000010";
 	int counter = 0;
+	//Appending random bytes for as long as necessary
 	while(binaryMessage.size() < (pLength + 2*8))
 	{
 		std::string pString = generateRandomNumber(1, pow(2, 8)-1).get_str(2);
@@ -67,13 +71,14 @@ bigInt ElGamal::PKCS(std::string message, int nBitLen)
 		binaryMessage += pString;
 	}
 
+	//Appending the flag before the data
 	binaryMessage += "00000000";
-
+	//Appending the data
 	for(char c : message)
 	{
 		binaryMessage += std::bitset<8>(c).to_string();
 	}
-
+	//Casting the binary message to a bigInt
 	bigInt padded(binaryMessage, 2);
 	return padded;
 }
@@ -81,20 +86,18 @@ bigInt ElGamal::PKCS(std::string message, int nBitLen)
 //Performs the ElGamal encryption on a single block < P
 CipherBlock ElGamal::encryptBlock(bigInt m, PublicKey pubKey)
 {
-
 	if(m > pubKey.p)
 	{
 		throw std::invalid_argument( "m larger than p" );
 	}
+	//Generating random Y for each block
 	bigInt y = generateRandomNumber(1, pubKey.q - 1);
-
+	//s = h**y mod p
 	bigInt s = modExp(pubKey.h, y, pubKey.p);
-
+	//c1 = g**y mod p
 	bigInt c1 = modExp(pubKey.g, y, pubKey.p);
-
+	//c2 = m*s mod p
 	bigInt c2 = modExp(m*s, 1, pubKey.p);
-
-	//std::cout << "Encrypted block with Y =\n\t" << y << "\n";
 
 	return CipherBlock(c1, c2);
 }
@@ -106,11 +109,14 @@ std::string ElGamal::concatCipherBlocks(std::vector<CipherBlock> cipherBlocks, u
 	unsigned int cSize = pBitSize/4;
 	for(auto c : cipherBlocks)
 	{
+		//Casting the ciphers from bigInt to hex string
 		std::string c1 = c.first.get_str(16);
 		std::string c2 = c.second.get_str(16);
+		//Prepending zeroes until they are of same bit size as p
 		while(c1.size() < cSize) c1.insert(0, 1, '0');
 		while(c2.size() < cSize) c2.insert(0, 1, '0');
 
+		//Concatenate c1 and c2
 		ciphertext += c1;
 		ciphertext += c2;
 	}
@@ -121,14 +127,16 @@ std::string ElGamal::concatCipherBlocks(std::vector<CipherBlock> cipherBlocks, u
 //Main decryption function
 std::string ElGamal::decrypt(std::string cipherText, PublicKey pubKey, bigInt privKey)
 {
-	//Parse the string and call decryptblock
+	//Parse the string into a vector of cipherblock structs
 	auto cipherBlocks = parseCiphertext(cipherText, bitCount(pubKey.p));
 
 	std::string plaintext = "";
+
 	for(auto c : cipherBlocks)
 	{
+		//Decrypt each block
 		bigInt m = decryptBlock(c, pubKey, privKey);
-
+		//Remove PKCS padding
 		plaintext += inversePKCS(m, bitCount(pubKey.p));
 	}
 
@@ -140,6 +148,8 @@ std::string ElGamal::decrypt(std::string cipherText, PublicKey pubKey, bigInt pr
 //Separate the ciphertext into blocks of C1's and C2's
 std::vector<CipherBlock> ElGamal::parseCiphertext(std::string ciphertext, unsigned int pBitSize)
 {
+	//Only gather substring of same amount of bits as P, and cast them to bigInts.
+	//Insert into a vector of cipherblocks
 
 	std::vector<CipherBlock> cipherBlocks;
 
@@ -159,10 +169,11 @@ std::vector<CipherBlock> ElGamal::parseCiphertext(std::string ciphertext, unsign
 //Decrypt a single block
 bigInt ElGamal::decryptBlock(CipherBlock c, PublicKey pubKey, bigInt privKey)
 {
-
+	//s = c1**x mod p
 	bigInt s = modExp(c.first, privKey, pubKey.p);
+	//sInverse = c1**(q-x) mod p
 	bigInt sInv = modExp(c.first, pubKey.q - privKey, pubKey.p);
-
+	//m = (c2*sInverse) mod p
 	bigInt m = modExp(c.second * sInv, 1, pubKey.p);
 
 	return m;
@@ -172,24 +183,33 @@ bigInt ElGamal::decryptBlock(CipherBlock c, PublicKey pubKey, bigInt privKey)
 std::string ElGamal::inversePKCS(bigInt input, int nBitLen)
 {
 	std::string data = input.get_str(2);
+	//A bit of a bad solution here. As the leading zeroes will have disappeared in the casting from string to int
+	//we have to prepend them back in.
 	data.insert(0, "00000000000000");
+	//We then remove them as they are not needed.
+	//(This adding and removing is just to make it easier to understand, in real life we would just remove the bits immediately
 	data.erase(0, 16);
-
+	//Rest of data read into stringstream
 	std::stringstream sstream(data);
 	std::string output;
 	bool paddingOver = false;
+
 	while(sstream.good())
 	{
+		//Read out 8 bits at the time from the data
 		std::bitset<8> bits;
 		sstream >> bits;
 		unsigned long i = bits.to_ulong();
+		//Checking if we have reached the final all zero byte before the actual data comes
 		if(i == 0 && !paddingOver)
 		{
+			//If that is the case, we of course set the flag that there is no more padding
 			paddingOver = true;
 			continue;
 		}
-
+		//Cast the byte to a char
 		unsigned char c = static_cast<unsigned char>(i);
+		//If the padding is over, and the character is not 0x00, we of course append it to the datastring we will return.
 		if(paddingOver && c != 0x00)
 		{
 			output += c;
@@ -199,6 +219,7 @@ std::string ElGamal::inversePKCS(bigInt input, int nBitLen)
 }
 
 //Modular exponentiation
+//Implemented after the pseudo code in our book.
 bigInt ElGamal::modExp(bigInt x, bigInt y, bigInt p)
 {
 	bigInt res = 1;
