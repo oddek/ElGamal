@@ -55,9 +55,7 @@ texcl=true,
 
 \setlength{\parindent}{0em}
 \setlength{\parskip}{1em}
-%\renewcommand{\baselinestretch}{2.0}
 
-%\renewcommand\thesubsection{\alph{subsection}}
 
 \renewcommand{\figurename}{Figure}
 \begin{document}
@@ -76,7 +74,7 @@ texcl=true,
 \newpage
 
 \section{Abstract}
-This is my submission for the home exam in Discrete Mathmatics, fall 2020.
+This is my submission for the home exam in Discrete Mathematics, fall 2020.
 
 %Innholdsfortegnelse
 \section{Introduction}
@@ -97,7 +95,7 @@ h := g^{x}
 
 If we choose a bad g, the discrete logarithm problem, which gives ElGamal its security, will decrease in complexity, resulting in a much less secure implementation.
 
-Choosing a good g, is a field of its own, and beyond the scope of this assigment. The main point is that the g we choose, needs to be able to generate all the elements of the group G.
+Choosing a good g, is a field of its own, and beyond the scope of this assignment. The main point is that the g we choose, needs to be able to generate all the elements of the group G.
 
 To illustrate this, lets have a look at the group
 
@@ -106,7 +104,7 @@ To illustrate this, lets have a look at the group
 \end{equation*}
 
 
-If we set up a table, where the rows list x values, and the colums list g values, and look at what happens for
+If we set up a table, where the rows list x values, and the columns list g values, and look at what happens for
 
 \begin{equation*}
   g^{x} \bmod 7
@@ -156,7 +154,7 @@ A visualization of the scheme can be seen in figure \ref{rPKCS}.
 
 \subsubsection{Block Handling}
 
-ElGamal is not a common choice for encrypting larger texts, however after conversations with the lecturer, I understood that this was a requirement for this assignment. To keep the overhead to a minimum, ECB(Electronic Codebook) was chosen. An illustration of ECB can be seen in figure \ref{rECB}. If the plaintext is larger than the number of bits of P, we divide it up into blocks, encrypt them seperately, and concatenate them.
+ElGamal is not a common choice for encrypting larger texts, however after conversations with the lecturer, I understood that this was a requirement for this assignment. To keep the overhead to a minimum, ECB(Electronic Codebook) was chosen. An illustration of ECB can be seen in figure \ref{rECB}. If the plain text is larger than the number of bits of P, we divide it up into blocks, encrypt them separately, and concatenate them.
 %DETTE BILDET MÅ BYTTES UT, VISER DEC OG IKKE ENC!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 \begin{figure}[H]
  \centering
@@ -167,7 +165,7 @@ ElGamal is not a common choice for encrypting larger texts, however after conver
 
 An extra complication with ElGamal is that the algorithm produces two numbers, in which the size of bits may vary. In order to be able to parse the concatenated strings later, I decided to prepend zeroes to c1 and c2, until their length were at 512 bits.
 
-Putting the padding together with Elgamal and and the post-encryption padding the full overview of this implementation encrypts a string, can be seen in figure \ref{rOVERHEAD}
+Putting the padding together with Elgamal and the post-encryption padding the full overview of this implementation encrypts a string, can be seen in figure \ref{rOVERHEAD}
 
 \begin{figure}[H]
  \centering
@@ -178,16 +176,16 @@ Putting the padding together with Elgamal and and the post-encryption padding th
 
 \subsection{ElGamal}
 
-Within the ElGamal implementation, most of the operations are quite trivial, and is basically the wikipedia article, translated into code.
+Within the ElGamal implementation, most of the operations are quite trivial, and is basically the Wikipedia article, translated into code.
 
-For all of the modular exponentiation operations, I implemented the algorithm as described in psuedo code in the course book\cite{ROSEN}.
+For all of the modular exponentiation operations, I implemented the algorithm as described in pseudo code in the course book\cite{ROSEN}.
 
 The group chosen for the implementation was
 \begin{equation*}
   G =((\mathbb{Z}/P)^{*}, *)
 \end{equation*}
 
-As i could not find any resources listing good primes and generators for ElGamal, I implemented my solution with the P and g from the 512 bit encryption test vector from a github repository\cite{PG}.
+As i could not find any resources listing good primes and generators for ElGamal, I implemented my solution with the P and g from the 512 bit encryption test vector from a GitHub repository\cite{PG}.
 \subsection{Results}
 
 As mentioned, the implementation takes a file, encrypts it, decrypts it and writes the results to two other files. The input file and the decrypted file is also compared to make sure that they match.
@@ -226,7 +224,7 @@ One thing that could have been implemented was the generation of P and g. As I h
 
 %Vedlegg
 \section{Appendices}
-\subsection{Sourcecode}
+\subsection{Source code}
 \begin{lstlisting}
 
 #include <iostream>
