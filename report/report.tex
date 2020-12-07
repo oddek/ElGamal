@@ -59,7 +59,7 @@ texcl=true,
 
 \renewcommand{\figurename}{Figure}
 \begin{document}
-\author{Kent Odde}
+\author{Candidate: 8005}
 \title{Home Exam\\RFMA310}
 
 \maketitle
@@ -80,7 +80,7 @@ This is my submission for the home exam in Discrete Mathematics, fall 2020.
 \section{Introduction}
 The assignment consists of implementing the ElGamal encryption algorithm, in a programming language of my own choosing. As a requirement for the implementation is speed, I found the most suitable language for the task to be C++. As it happens, this is also the language I'm most proficient in.
 
-One downsize of using C++ is the fact that there exists no built in support for large numbers. Building my own library for this would be too time-consuming, so I decided to make use of the Gnu Multiple Precision library (GMP)\cite{GMP}.
+One downsize of using C++ is the fact that there exists no built in support for large integers. Building my own library for this would be too time-consuming, so I decided to make use of the GNU Multiple Precision library (GMP)\cite{GMP}.
 
 Quite a bit of overhead were required to encrypt larger inputs. However, because this course is concerned with the mathematics behind ElGamal and the fact that the professor wanted a short paper, I will not cover this part of the implementation to a detailed extent.
 
@@ -95,7 +95,7 @@ h := g^{x}
 
 If we choose a bad g, the discrete logarithm problem, which gives ElGamal its security, will decrease in complexity, resulting in a much less secure implementation.
 
-Choosing a good g, is a field of its own, and beyond the scope of this assignment. The main point is that the g we choose, needs to be able to generate all the elements of the group G.
+Choosing a good g, is a field of its own, and was after conversations with the professor considered to be beyond the scope of this assignment. The main point is that the g we choose, needs to be able to generate all the elements of the group G.
 
 To illustrate this, lets have a look at the group
 
@@ -154,7 +154,7 @@ A visualization of the scheme can be seen in figure \ref{rPKCS}.
 
 \subsubsection{Block Handling}
 
-ElGamal is not a common choice for encrypting larger texts, however after conversations with the lecturer, I understood that this was a requirement for this assignment. To keep the overhead to a minimum, ECB(Electronic Codebook) was chosen. An illustration of ECB can be seen in figure \ref{rECB}. If the plain text is larger than the number of bits of P, we divide it up into blocks, encrypt them separately, and concatenate them.
+ElGamal is not a common choice for encrypting larger texts, but rather used as a means of exchanging symmetric encryption keys. However after conversations with the lecturer, I understood that this was a requirement for this assignment. To keep the overhead to a minimum, ECB(Electronic Codebook) was chosen. An illustration of ECB can be seen in figure \ref{rECB}. If the plain text is larger than the number of bits of P, we divide it up into blocks, encrypt them separately, and concatenate them.
 %DETTE BILDET MÅ BYTTES UT, VISER DEC OG IKKE ENC!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 \begin{figure}[H]
  \centering
@@ -165,11 +165,11 @@ ElGamal is not a common choice for encrypting larger texts, however after conver
 
 An extra complication with ElGamal is that the algorithm produces two numbers, in which the size of bits may vary. In order to be able to parse the concatenated strings later, I decided to prepend zeroes to c1 and c2, until their length were at 512 bits.
 
-Putting the padding together with Elgamal and the post-encryption padding the full overview of this implementation encrypts a string, can be seen in figure \ref{rOVERHEAD}
+Putting the padding together with Elgamal and the post-encryption padding, the full overview of this implementation can be seen in figure \ref{rOVERHEAD}
 
 \begin{figure}[H]
  \centering
-  \includegraphics[width=300pt]{img/overview.png}
+  \includegraphics[width=280pt]{img/overview.png}
  \caption{Overview of the overhead}
  \label{rOVERHEAD}
  \end{figure}
@@ -207,9 +207,10 @@ The three files are too large to be included within this report, but they are lo
 \section{Conclusion}
 In order to understand something, I would say the best way is to implement it in code. Only by truly understanding it yourself, are you able to describe to a computer how to do it. The same goes for ElGamal encryption.
 
-I am quite satisfied with the implementation overall. It is quite efficient, as encryption usually takes around 14ms, and decryption takes around 66ms, with a 512 bit P. One should keep in mind that this is with a lot of overhead, which means that the encryption of a single block, which is more similar to a real world use of ElGamal, would be much faster.
+I am quite satisfied with the implementation overall. It is quite efficient, as encryption usually takes around 14ms, and decryption takes around 66ms, with a 512 bit P. One should keep in mind that this is with a lot of overhead, which means that the encryption of a single block, which is more similar to a real world use of ElGamal, would be much faster. I am quite confident that the implementation would also be able handle larger primes, but as mentioned previously, I could not find any other primes and generators than the ones i made use of.
 
 One thing that could have been implemented was the generation of P and g. As I have implemented relatively efficient large prime generators before, generating P would not have been a problem. However, after conversations with the professor, I found that finding a good generator would be too time-consuming. A simple solution would make for a horribly inefficient program, on the other hand, a complex and useable solution would take too much time to understand, and implement.
+
 \newpage
 %Referanse
 %\section{Referanser}
